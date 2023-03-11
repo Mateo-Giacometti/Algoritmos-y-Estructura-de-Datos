@@ -18,8 +18,7 @@ bool is_prime(int x){
  * la función calcula cuantos productos entran en el depósito.
  */
 int storage_capacity(float d, float v){
-    int products = d / v;
-    return products;
+    return (int) (d / v);
 }
 
 /*
@@ -49,6 +48,9 @@ int array_max(const int *array, int length){
  * Aplica la función a cada elemento de un arreglo de enteros.
  */
 void array_map(int *array, int length, int f(int)){
+    if (array == NULL){
+        return;
+    }
     for (int i = 0; i < length; i++) {
         array[i] = f(array[i]);
     }
@@ -60,6 +62,9 @@ void array_map(int *array, int length, int f(int)){
  * Si el arreglo es NULL devuelve NULL.
  */
 int *copy_array(const int *array, int length){
+    if(array == NULL){
+        return NULL;
+    }
     int *array_copy = malloc(length * sizeof(int));
     if(array_copy == NULL){
         return NULL;
@@ -75,6 +80,18 @@ int *copy_array(const int *array, int length){
  * Si el arreglo es NULL, no hace nada.
  */
 void bubble_sort(int *array, int length){
+    if(array == NULL){
+        return;
+    }
+    for (int step = 0; step < length - 1; step++){
+        for (int i = 0; i < length - step - 1; ++i){
+            if (array[i] > array[i + 1]) {
+                int temp = array[i];
+                array[i] = array[i + 1];
+                array[i + 1] = temp;
+            }
+        }
+    }
     return;
 }
 
@@ -84,7 +101,19 @@ void bubble_sort(int *array, int length){
  */
 bool array_equal(const int *array1, int length1,
                  const int *array2, int length2){
-    return false;
+    if(array1 == NULL || array2 == NULL){
+        return false;
+    }
+    if(length1 != length2){
+        return false;
+    }
+    for (int i = 0; i < length1; i++) {
+        if(array1[i] != array2[i]){
+            return false;
+        }
+    }
+    return true;
+
 }
 
 /*
@@ -93,6 +122,7 @@ bool array_equal(const int *array1, int length1,
  */
 bool integer_anagrams(const int *array1, int length1,
                       const int *array2, int length2){
+    
     return false;
 }
 
