@@ -48,7 +48,7 @@ int array_max(const int *array, int length){
  * Aplica la función a cada elemento de un arreglo de enteros.
  */
 void array_map(int *array, int length, int f(int)){
-    if (array == NULL){
+    if (array == NULL || f == NULL || length <= 0){
         return;
     }
     for (int i = 0; i < length; i++) {
@@ -99,10 +99,10 @@ void bubble_sort(int *array, int length){
  */
 bool array_equal(const int *array1, int length1,
                  const int *array2, int length2){
-    if(array1 == NULL || array2 == NULL){
-        return false;
+    if(array1 == NULL && array2 == NULL){
+        return true;
     }
-    if(length1 != length2){
+    if(length1 != length2 || array1 == NULL || array2 == NULL){
         return false;
     }
     for (int i = 0; i < length1; i++) {
@@ -126,13 +126,19 @@ bool integer_anagrams(const int *array1, int length1,
     if(length1 != length2){
         return false;
     }
-    bubble_sort(array1, length1);
-    bubble_sort(array2, length2);
+    int *array1_copy = copy_array(array1, length1);
+    int *array2_copy = copy_array(array2, length2);
+    bubble_sort(array1_copy, length1);
+    bubble_sort(array2_copy, length2);
     for(int i = 0; i < length1; i++){
-        if (array1[i] != array2[i]) {
+        if (array1_copy[i] != array2_copy[i]) {
+            free(array1_copy);
+            free(array2_copy);
             return false;
         }
     }
+    free(array1_copy);
+    free(array2_copy);
     return true;
 }
 
