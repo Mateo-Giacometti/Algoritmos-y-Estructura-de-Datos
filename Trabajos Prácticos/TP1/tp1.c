@@ -167,5 +167,13 @@ int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts
  * array_amount: la cantidad de arreglos
  */
 void free_array_of_arrays(int **array_of_arrays, int *array_lenghts, int array_amount){
+    if(array_of_arrays == NULL || array_lenghts == NULL){
+        return;
+    }
+    for (int i = 0; i < array_amount; i++) {
+        free(array_of_arrays[i]);
+    }
+    free(array_of_arrays);
+    free(array_lenghts);
     return;
 }
