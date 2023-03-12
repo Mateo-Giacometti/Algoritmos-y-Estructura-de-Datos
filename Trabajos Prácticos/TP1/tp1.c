@@ -146,7 +146,7 @@ bool integer_anagrams(const int *array1, int length1,
  * array_amount: la cantidad de arreglos
  */
 int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts, int array_amount){
-    if(array_of_arrays == NULL){
+    if(array_of_arrays == NULL || array_lenghts == NULL){
         return NULL;
     }
     int **array_of_arrays_copy = malloc(array_amount * sizeof(int *));
