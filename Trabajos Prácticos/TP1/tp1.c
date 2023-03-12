@@ -86,9 +86,7 @@ void bubble_sort(int *array, int length){
     for (int step = 0; step < length - 1; step++){
         for (int i = 0; i < length - step - 1; ++i){
             if (array[i] > array[i + 1]) {
-                int temp = array[i];
-                array[i] = array[i + 1];
-                array[i + 1] = temp;
+                swap(&array[i], &array[i + 1]);
             }
         }
     }
@@ -122,8 +120,13 @@ bool array_equal(const int *array1, int length1,
  */
 bool integer_anagrams(const int *array1, int length1,
                       const int *array2, int length2){
+    if(array1 == NULL || array2 == NULL){
+        return false;
+    }
+    if(length1 != length2){
+        return false;
+    }
     
-    return false;
 }
 
 /*
