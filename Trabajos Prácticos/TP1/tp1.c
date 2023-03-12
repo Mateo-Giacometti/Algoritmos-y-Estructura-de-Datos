@@ -126,7 +126,14 @@ bool integer_anagrams(const int *array1, int length1,
     if(length1 != length2){
         return false;
     }
-    
+    bubble_sort(array1, length1);
+    bubble_sort(array2, length2);
+    for(int i = 0; i < length1; i++){
+        if (array1[i] != array2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /*
@@ -139,7 +146,17 @@ bool integer_anagrams(const int *array1, int length1,
  * array_amount: la cantidad de arreglos
  */
 int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts, int array_amount){
-    return NULL;
+    if(array_of_arrays == NULL){
+        return NULL;
+    }
+    int **array_of_arrays_copy = malloc(array_amount * sizeof(int *));
+    if(array_of_arrays_copy == NULL){
+        return NULL;
+    }
+    for (int i = 0; i < array_amount; i++) {
+        array_of_arrays_copy[i] = copy_array(array_of_arrays[i], array_lenghts[i]);
+    }
+    return array_of_arrays_copy;
 }
 
 /*
