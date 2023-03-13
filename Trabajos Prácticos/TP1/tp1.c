@@ -130,16 +130,10 @@ bool integer_anagrams(const int *array1, int length1,
     int *array2_copy = copy_array(array2, length2);
     bubble_sort(array1_copy, length1);
     bubble_sort(array2_copy, length2);
-    for(int i = 0; i < length1; i++){
-        if (array1_copy[i] != array2_copy[i]) {
-            free(array1_copy);
-            free(array2_copy);
-            return false;
-        }
-    }
+    bool result = array_equal(array1_copy, length1, array2_copy, length2);
     free(array1_copy);
     free(array2_copy);
-    return true;
+    return result;
 }
 
 /*
