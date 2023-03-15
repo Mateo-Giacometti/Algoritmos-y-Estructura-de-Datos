@@ -48,7 +48,7 @@ int array_max(const int *array, int length){
  * Aplica la función a cada elemento de un arreglo de enteros.
  */
 void array_map(int *array, int length, int f(int)){
-    if (array == NULL || f == NULL || length <= 0){
+    if (!array || !f || length <= 0){
         return;
     }
     for (int i = 0; i < length; i++) {
@@ -62,11 +62,11 @@ void array_map(int *array, int length, int f(int)){
  * Si el arreglo es NULL devuelve NULL.
  */
 int *copy_array(const int *array, int length){
-    if(array == NULL){
+    if(!array){
         return NULL;
     }
     int *array_copy = malloc(length * sizeof(int));
-    if(array_copy == NULL){
+    if(!array_copy){
         return NULL;
     }
     for (int i = 0; i < length; i++) {
@@ -80,7 +80,7 @@ int *copy_array(const int *array, int length){
  * Si el arreglo es NULL, no hace nada.
  */
 void bubble_sort(int *array, int length){
-    if(array == NULL){
+    if(!array){
         return;
     }
     for (int step = 0; step < length - 1; step++){
@@ -99,10 +99,10 @@ void bubble_sort(int *array, int length){
  */
 bool array_equal(const int *array1, int length1,
                  const int *array2, int length2){
-    if(array1 == NULL && array2 == NULL){
+    if(!array1 && !array2){
         return true;
     }
-    if(length1 != length2 || array1 == NULL || array2 == NULL){
+    if(length1 != length2 || !array1 || !array2){
         return false;
     }
     for (int i = 0; i < length1; i++) {
@@ -120,7 +120,7 @@ bool array_equal(const int *array1, int length1,
  */
 bool integer_anagrams(const int *array1, int length1,
                       const int *array2, int length2){
-    if(array1 == NULL || array2 == NULL){
+    if(!array1 || !array2){
         return false;
     }
     if(length1 != length2){
@@ -146,11 +146,11 @@ bool integer_anagrams(const int *array1, int length1,
  * array_amount: la cantidad de arreglos
  */
 int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts, int array_amount){
-    if(array_of_arrays == NULL || array_lenghts == NULL){
+    if(!array_of_arrays || !array_lenghts){
         return NULL;
     }
     int **array_of_arrays_copy = malloc(array_amount * sizeof(int *));
-    if(array_of_arrays_copy == NULL){
+    if(!array_of_arrays_copy){
         return NULL;
     }
     for (int i = 0; i < array_amount; i++) {
@@ -167,7 +167,7 @@ int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts
  * array_amount: la cantidad de arreglos
  */
 void free_array_of_arrays(int **array_of_arrays, int *array_lenghts, int array_amount){
-    if(array_of_arrays == NULL || array_lenghts == NULL){
+    if(!array_of_arrays || !array_lenghts){
         return;
     }
     for (int i = 0; i < array_amount; i++) {
