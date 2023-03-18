@@ -67,6 +67,7 @@ int *copy_array(const int *array, int length){
     }
     int *array_copy = malloc(length * sizeof(int));
     if(!array_copy){
+        free(array_copy);
         return NULL;
     }
     for (int i = 0; i < length; i++) {
@@ -128,6 +129,11 @@ bool integer_anagrams(const int *array1, int length1,
     }
     int *array1_copy = copy_array(array1, length1);
     int *array2_copy = copy_array(array2, length2);
+    if (!array1_copy || !array2_copy){
+        free(array1_copy);
+        free(array2_copy);
+        return false;
+    }
     bubble_sort(array1_copy, length1);
     bubble_sort(array2_copy, length2);
     bool result = array_equal(array1_copy, length1, array2_copy, length2);
