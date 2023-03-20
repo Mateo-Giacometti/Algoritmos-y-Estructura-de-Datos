@@ -5,6 +5,10 @@
  * Determina si un número es primo.
  */
 bool is_prime(int x){
+   /*if(x <= 1){
+        return false;
+    }
+    */
     for(int i = 2; i < x; i++){
         if (x % i == 0){
             return false;
@@ -67,7 +71,6 @@ int *copy_array(const int *array, int length){
     }
     int *array_copy = malloc(length * sizeof(int));
     if(!array_copy){
-        free(array_copy);
         return NULL;
     }
     for (int i = 0; i < length; i++) {
@@ -152,15 +155,30 @@ bool integer_anagrams(const int *array1, int length1,
  * array_amount: la cantidad de arreglos
  */
 int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts, int array_amount){
-    if(!array_of_arrays || !array_lenghts){
+    if(!array_of_arrays || !array_lenghts || array_amount <= 0){
         return NULL;
     }
-    int **array_of_arrays_copy = malloc(array_amount * sizeof(int *));
+    int **array_of_arrays_copy = (int **) malloc(sizeof(int *) * array_amount);
     if(!array_of_arrays_copy){
         return NULL;
     }
-    for (int i = 0; i < array_amount; i++) {
-        array_of_arrays_copy[i] = copy_array(array_of_arrays[i], array_lenghts[i]);
+    for (int i = 0; i < array_amount; i++){
+        if (!array_of_arrays[i]){
+            array_of_arrays_copy[i] = NULL;
+        }
+        else{
+            array_of_arrays_copy[i] = (int *) malloc(sizeof(int) * array_lenghts[i]);
+            if(!array_of_arrays_copy[i]){
+                for(int j = 0; j < i; j++){
+                    free(array_of_arrays_copy[j]);
+                }
+                free(array_of_arrays_copy);
+                return NULL;
+            }
+            for (int k = 0; k < array_lenghts[i]; k++){
+                array_of_arrays_copy[i][k] = array_of_arrays[i][k];
+            }
+        }
     }
     return array_of_arrays_copy;
 }
@@ -173,13 +191,14 @@ int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts
  * array_amount: la cantidad de arreglos
  */
 void free_array_of_arrays(int **array_of_arrays, int *array_lenghts, int array_amount){
-    if(!array_of_arrays || !array_lenghts){
+    if(!array_of_arrays || !array_lenghts || array_amount <= 0){
         return;
     }
-    for (int i = 0; i < array_amount; i++) {
+    for (int i = 0; i < array_amount; i++){
         free(array_of_arrays[i]);
     }
     free(array_of_arrays);
     free(array_lenghts);
     return;
 }
+
