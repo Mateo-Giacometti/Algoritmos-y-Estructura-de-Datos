@@ -92,16 +92,32 @@ int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts
     return array_of_arrays_copy;
 }
 
+void free_array_of_arrays(int **array_of_arrays, int *array_lenghts, int array_amount){
+    if(!array_of_arrays || !array_lenghts || array_amount <= 0){
+        return;
+    }
+    for (int i = 0; i < array_amount; i++){
+        free(array_of_arrays[i]);
+    }
+    free(array_of_arrays);
+    free(array_lenghts);
+    return;
+}
+
 int main(void){
     
     int **array_of_arrays = (int **) malloc(sizeof(int *) * 3);
     int *array_lenghts = (int *) malloc(sizeof(int) * 3);
+    int *array_lenghts1 = (int *) malloc(sizeof(int) * 3);
     array_of_arrays[0] = (int *) malloc(sizeof(int) * 3);
     array_of_arrays[1] = (int *) malloc(sizeof(int) * 3);
     array_of_arrays[2] = (int *) malloc(sizeof(int) * 3);
     array_lenghts[0] = 3;
     array_lenghts[1] = 3;
     array_lenghts[2] = 3;
+    array_lenghts1[0] = 3;
+    array_lenghts1[1] = 3;
+    array_lenghts1[2] = 3;
     array_of_arrays[0][0] = 1;
     array_of_arrays[0][1] = 2;
     array_of_arrays[0][2] = 3;
@@ -119,13 +135,7 @@ int main(void){
         }
         printf("\n");
     }
-    for (int i = 0; i < 3; i++){
-        free(array_of_arrays[i]);
-        free(array_of_arrays_copy[i]);
-    }
-    free(array_of_arrays);
-    free(array_of_arrays_copy);
-    free(array_lenghts);
-
+    free_array_of_arrays(array_of_arrays_copy, array_lenghts1, 3);
+    free_array_of_arrays(array_of_arrays, array_lenghts, 3);
     return EXIT_SUCCESS;
 }
