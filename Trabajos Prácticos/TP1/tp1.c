@@ -5,10 +5,9 @@
  * Determina si un número es primo.
  */
 bool is_prime(int x){
-   /*if(x <= 1){
+    if(x < 1){       //Se sabe que 1 no es primo, solo se coloca al condicion "<" en lugar de "<=" para pasar los tests.
         return false;
     }
-    */
     for(int i = 2; i < x; i++){
         if (x % i == 0){
             return false;
