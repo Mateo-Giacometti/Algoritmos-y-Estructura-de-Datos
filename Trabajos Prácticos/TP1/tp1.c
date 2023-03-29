@@ -83,7 +83,7 @@ int *copy_array(const int *array, int length){
  * Si el arreglo es NULL, no hace nada.
  */
 void bubble_sort(int *array, int length){
-    if(!array){
+    if(!array || length <= 0){
         return;
     }
     for (int step = 0; step < length - 1; step++){
@@ -166,16 +166,13 @@ int **copy_array_of_arrays(const int **array_of_arrays, const int *array_lenghts
             array_of_arrays_copy[i] = NULL;
         }
         else{
-            array_of_arrays_copy[i] = (int *) malloc(sizeof(int) * array_lenghts[i]);
+            array_of_arrays_copy[i] = copy_array(array_of_arrays[i], array_lenghts[i]);
             if(!array_of_arrays_copy[i]){
                 for(int j = 0; j < i; j++){
                     free(array_of_arrays_copy[j]);
                 }
                 free(array_of_arrays_copy);
                 return NULL;
-            }
-            for (int k = 0; k < array_lenghts[i]; k++){
-                array_of_arrays_copy[i][k] = array_of_arrays[i][k];
             }
         }
     }
