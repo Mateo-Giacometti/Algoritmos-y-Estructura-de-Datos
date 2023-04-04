@@ -113,12 +113,3 @@ def top_k_2(nums, k):
             
     return results
 
-if __name__ == "__main__":
-    fptr = open(os.environ['OUTPUT_PATH'], 'w')
-    nums = [int(x) for x in input().split(" ")]
-    k = int(input())
-    result = top_k(nums, k)
-
-    fptr.write(' '.join(map(str, result)))
-
-    fptr.close()

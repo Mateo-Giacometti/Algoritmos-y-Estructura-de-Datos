@@ -21,7 +21,12 @@ bool is_prime(int x){
  * la función calcula cuantos productos entran en el depósito.
  */
 int storage_capacity(float d, float v){
-    return (int) (d / v);
+    if(d > 0 && v > 0){
+        return (int) (d / v);
+    }
+    else{
+        return 0;
+    }
 }
 
 /*
