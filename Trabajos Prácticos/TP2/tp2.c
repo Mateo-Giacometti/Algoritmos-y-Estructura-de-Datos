@@ -154,12 +154,15 @@ bool list_iter_at_first(const list_iter_t *iter) { //Ver
 void list_iter_destroy(list_iter_t *iter) {free(iter);}
 
 bool list_iter_insert_after(list_iter_t *iter, void *value) {
-    if(iter->list->size <= 0) return false;
     node_t *insert_node = (node_t*) malloc(sizeof(node_t));
     if(!insert_node) return false; 
     insert_node->value = value;
     insert_node->next = iter->curr->next;
     insert_node->prev = iter->curr;
+    if(!iter->curr){
+        iter->curr = insert_node; 
+        return true; //Preguntar si esta bien
+    }
     if(iter->curr->next != NULL) iter->curr->next->prev = insert_node;
     iter->curr->next = insert_node;
     if(iter->curr == iter->list->tail) iter->list->tail = insert_node;
@@ -174,6 +177,10 @@ bool list_iter_insert_before(list_iter_t *iter, void *value) { //Ver
     insert_node->value = value;
     insert_node->next = iter->curr;
     insert_node->prev = iter->curr->prev;
+    if(!iter->curr){
+        iter->curr = insert_node; 
+        return true; //Preguntar si esta bien
+    }
     if(iter->curr->prev != NULL) iter->curr->prev->next = insert_node;
     iter->curr->prev = insert_node;
     if(insert_node == iter->list->head) iter->list->head = insert_node;
