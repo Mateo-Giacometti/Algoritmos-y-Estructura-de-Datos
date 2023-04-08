@@ -1,107 +1,151 @@
 #include "tp2.h"
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 struct node;
 typedef struct node node_t;
 
 struct node {
-    void* value;
-    node_t* next;
-    node_t* prev;
+  void *value;
+  node_t *next;
+  node_t *prev;
 };
 
 struct list {
-    node_t* head;
-    node_t* tail;
-    size_t size;
+  node_t *head;
+  node_t *tail;
+  size_t size;
 };
 
 struct list_iter {
-    list_t* list;
-    node_t* curr;
+  list_t *list;
+  node_t *curr;
 };
 
-list_t *list_new(){
-    return NULL;
+list_t *list_new() {
+  list_t *new_list = malloc(sizeof(list_t));
+  if (!new_list) return NULL;
+  new_list->head = NULL;
+  new_list->tail = NULL;
+  new_list->size = 0;
+  return new_list;
 }
 
-size_t list_length(const list_t *list){
-    return 0;
+size_t list_length(const list_t *list) {return list->size;}
+
+bool list_is_empty(const list_t *list) { 
+    if (list->size == 0) return true;
+    else return false;
 }
 
-bool list_is_empty(const list_t *list){
+bool list_insert_head(list_t *list, void *value) { 
+    node_t *new_node = (node_t*) malloc(sizeof(node_t));
+    if(!new_node) return false;
+    new_node->value = value;
+    new_node->next = list->head;
+    new_node->prev = NULL;
+    if(list->head != NULL) list->head->prev = new_node;
+    list->head = new_node;
+    if(!list->tail) list->tail = new_node;
+    list->size++;
     return true;
 }
 
-bool list_insert_head(list_t *list, void *value){
-    return false;
+bool list_insert_tail(list_t *list, void *value) { 
+    node_t *new_node = (node_t*) malloc(sizeof(node_t));
+    if(!new_node) return false;
+    new_node->value = value;
+    new_node->next = NULL;
+    new_node->prev = list->tail;
+    if(list->tail != NULL) list->tail->next = new_node;
+    list->tail = new_node;
+    if(!list->head) list->head = new_node;
+    list->size++;
+    return true;
 }
 
-bool list_insert_tail(list_t *list, void *value){
-    return false;
+void *list_peek_head(const list_t *list) {
+    if(!list->head) return NULL;
+    return list->head->value;
 }
 
-void *list_peek_head(const list_t *list){
-    return NULL;
+void *list_peek_tail(const list_t *list) {
+    if(!list->tail) return NULL;
+    return list->tail->value;
 }
 
-void *list_peek_tail(const list_t *list){
-    return NULL;
+void *list_pop_head(list_t *list) {
+    if(list->size <= 0) return NULL; //Hay que verificar si tail, head y size son NULL ?
+    node_t *aux_head = list->head;
+    void *head_value = aux_head->value;
+    list->head = aux_head->next;
+    if(list->head != NULL) list->head->prev = NULL;
+    else list->tail = NULL;
+    list->size--;
+    free(aux_head);
+    return head_value;
 }
 
-void *list_pop_head(list_t *list){
-    return NULL;
+void *list_pop_tail(list_t *list) {
+    if(list->size <= 0) return NULL;
+    node_t *aux_tail = list->tail;
+    void *tail_value = aux_tail->value;
+    list->tail = aux_tail->prev;
+    if(list->tail != NULL) list->tail->next = NULL;
+    else list->head = NULL;
+    list->size--;
+    free(aux_tail);
+    return tail_value;
 }
 
-void *list_pop_tail(list_t *list){
-    return NULL;
+void list_destroy(list_t *list, void destroy_value(void *)) {
+    while(list->head != NULL){
+        node_t *aux_head = list->head;
+        list->head = aux_head->next;
+        if(destroy_value != NULL) destroy_value(aux_head->value);
+        free(aux_head);
+    }
+    free(list);
 }
 
-void list_destroy(list_t *list, void destroy_value(void *)){
-    return;
+list_iter_t *list_iter_create_head(list_t *list) {
+    list_iter_t *new_head_iter = (list_iter_t*) malloc(sizeof(list_iter_t));
+    if(!new_head_iter) return NULL;
+    new_head_iter->list = list;
+    new_head_iter->curr = list->head;
+    return new_head_iter;
 }
 
-list_iter_t *list_iter_create_head(list_t *list){
-    return NULL;
+list_iter_t *list_iter_create_tail(list_t *list) {
+    list_iter_t *new_tail_iter = (list_iter_t*) malloc(sizeof(list_iter_t));
+    if(!new_tail_iter) return NULL;
+    new_tail_iter->list = list;
+    new_tail_iter->curr = list->tail;
+    return new_tail_iter;
 }
 
-list_iter_t *list_iter_create_tail(list_t *list){
-    return NULL;
+bool list_iter_forward(list_iter_t *iter) { //Ver
+    if(!iter->curr || !iter->curr->next) return false;
+    else iter->curr = iter->curr->next;
+    return true;
 }
 
-bool list_iter_forward(list_iter_t *iter){
-    return false;
+bool list_iter_backward(list_iter_t *iter) { //Ver
+    if(!iter->curr || !iter->curr->prev) return false;
+    else iter->curr = iter->curr->prev;
+    return true;
 }
 
-bool list_iter_backward(list_iter_t *iter){
-    return false;
-}
+void *list_iter_peek_current(const list_iter_t *iter) { return NULL; }
 
-void *list_iter_peek_current(const list_iter_t *iter){
-    return NULL;
-}
+bool list_iter_at_last(const list_iter_t *iter) { return false; }
 
-bool list_iter_at_last(const list_iter_t *iter){
-    return false;
-}
+bool list_iter_at_first(const list_iter_t *iter) { return false; }
 
-bool list_iter_at_first(const list_iter_t *iter){
-    return false;
-}
+void list_iter_destroy(list_iter_t *iter) { return; }
 
-void list_iter_destroy(list_iter_t *iter){
-    return;
-}
+bool list_iter_insert_after(list_iter_t *iter, void *value) { return false; }
 
-bool list_iter_insert_after(list_iter_t *iter, void *value){
-    return false;
-}
+bool list_iter_insert_before(list_iter_t *iter, void *value) { return false; }
 
-bool list_iter_insert_before(list_iter_t *iter, void *value){
-    return false;
-}
-
-void *list_iter_delete(list_iter_t *iter){
-    return NULL;
-}
+void *list_iter_delete(list_iter_t *iter) { return NULL; }

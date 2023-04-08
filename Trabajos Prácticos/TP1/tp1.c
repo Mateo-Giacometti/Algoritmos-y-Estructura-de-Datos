@@ -73,7 +73,7 @@ int *copy_array(const int *array, int length){
     if(!array){
         return NULL;
     }
-    int *array_copy = malloc(length * sizeof(int));
+    int *array_copy = (int*) malloc(length * sizeof(int));
     if(!array_copy){
         return NULL;
     }
