@@ -34,7 +34,7 @@ list_t *list_new() {
 size_t list_length(const list_t *list) {return list->size;}
 
 bool list_is_empty(const list_t *list) { 
-    if (list->size == 0) return true;
+    if (list->size <= 0) return true;
     else return false;
 }
 
@@ -136,16 +136,62 @@ bool list_iter_backward(list_iter_t *iter) { //Ver
     return true;
 }
 
-void *list_iter_peek_current(const list_iter_t *iter) { return NULL; }
+void *list_iter_peek_current(const list_iter_t *iter) { //Ver
+    if(!iter->curr || iter->list->size <= 0) return NULL;
+    return iter->curr->value;
+}
 
-bool list_iter_at_last(const list_iter_t *iter) { return false; }
+bool list_iter_at_last(const list_iter_t *iter) { //Ver
+    if(iter->curr != iter->list->tail || iter->list->size <= 0) return false;
+    else return true;
+}
 
-bool list_iter_at_first(const list_iter_t *iter) { return false; }
+bool list_iter_at_first(const list_iter_t *iter) { //Ver
+    if(iter->curr != iter->list->head || iter->list->size <= 0) return false;
+    else return true;
+}
 
-void list_iter_destroy(list_iter_t *iter) { return; }
+void list_iter_destroy(list_iter_t *iter) {free(iter);}
 
-bool list_iter_insert_after(list_iter_t *iter, void *value) { return false; }
+bool list_iter_insert_after(list_iter_t *iter, void *value) {
+    if(iter->list->size <= 0) return false;
+    node_t *insert_node = (node_t*) malloc(sizeof(node_t));
+    if(!insert_node) return false; 
+    insert_node->value = value;
+    insert_node->next = iter->curr->next;
+    insert_node->prev = iter->curr;
+    if(iter->curr->next != NULL) iter->curr->next->prev = insert_node;
+    iter->curr->next = insert_node;
+    if(iter->curr == iter->list->tail) iter->list->tail = insert_node;
+    iter->list->size++;
+    return true;
+}
 
-bool list_iter_insert_before(list_iter_t *iter, void *value) { return false; }
+bool list_iter_insert_before(list_iter_t *iter, void *value) { //Ver
+    if(iter->list->size <= 0) return false;
+    node_t *insert_node = (node_t*) malloc(sizeof(node_t));
+    if(!insert_node) return false; 
+    insert_node->value = value;
+    insert_node->next = iter->curr;
+    insert_node->prev = iter->curr->prev;
+    if(iter->curr->prev != NULL) iter->curr->prev->next = insert_node;
+    iter->curr->prev = insert_node;
+    if(insert_node == iter->list->head) iter->list->head = insert_node;
+    iter->list->size++;
+    return true;
+}
 
-void *list_iter_delete(list_iter_t *iter) { return NULL; }
+void *list_iter_delete(list_iter_t *iter) {
+    if(iter->list->size <= 0) return false;
+    node_t *delete_node = iter->curr;
+    void *delate_node_value = iter->curr->value;
+    if(iter->curr->next != NULL) iter->curr->next->prev = iter->curr->prev;
+    if(iter->curr->prev != NULL) iter->curr->prev->next = iter->curr->next;
+    if(iter->curr == iter->list->head) iter->list->head = iter->curr->next;
+    if(iter->curr == iter->list->tail) iter->list->tail = iter->curr->prev;
+    if(!iter->curr->next) iter->curr = iter->curr->prev; //Revisar
+    else iter->curr = iter->curr->next;
+    iter->list->size--;
+    free(delete_node);
+    return delate_node_value;
+}
