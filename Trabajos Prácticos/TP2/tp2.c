@@ -23,7 +23,7 @@ struct list_iter {
 };
 
 list_t *list_new() {
-  list_t *new_list = (list_t*) malloc(sizeof(list_t));
+  list_t *new_list = (list_t *) malloc(sizeof(list_t));
   if(!new_list) return NULL;
   new_list->head = NULL;
   new_list->tail = NULL;
@@ -64,18 +64,18 @@ bool list_insert_tail(list_t *list, void *value) {
   return true;
 }
 
-void *list_peek_head(const list_t *list) {
-  if(list->size <= 0 || !list->head) return NULL;
+void *list_peek_head(const list_t *list) { //Duda
+  if(list->size == 0) return NULL;
   return list->head->value;
 }
 
-void *list_peek_tail(const list_t *list) {
-  if(list->size <= 0 || !list->tail) return NULL;
+void *list_peek_tail(const list_t *list) { //Duda
+  if(list->size == 0) return NULL;
   return list->tail->value;
 }
 
 void *list_pop_head(list_t *list) {
-  if(list->size == 0) return NULL; // Hay que verificar si tail, head y size son NULL ? Si es NULL, que se devuelve ?
+  if(list->size == 0) return NULL; 
   node_t *aux_head = list->head;
   void *head_value = aux_head->value;
   list->head = aux_head->next;
@@ -87,7 +87,7 @@ void *list_pop_head(list_t *list) {
 }
 
 void *list_pop_tail(list_t *list) {
-  if(list->size <= 0) return NULL;
+  if(list->size == 0) return NULL;
   node_t *aux_tail = list->tail;
   void *tail_value = aux_tail->value;
   list->tail = aux_tail->prev;
@@ -122,42 +122,43 @@ list_iter_t *list_iter_create_tail(list_t *list) {
   return new_tail_iter;
 }
 
-bool list_iter_forward(list_iter_t *iter) { // Ver
+bool list_iter_forward(list_iter_t *iter) { 
   if(!iter->curr || !iter->curr->next) return false;
   else iter->curr = iter->curr->next;
   return true;
 }
 
-bool list_iter_backward(list_iter_t *iter) { // Ver
+bool list_iter_backward(list_iter_t *iter) { 
   if(!iter->curr || !iter->curr->prev) return false;
   else iter->curr = iter->curr->prev;
   return true;
 }
 
-void *list_iter_peek_current(const list_iter_t *iter) { // Ver -- Preguntar por el testeo if(!iter->curr) return NULL;
-  if(!iter->curr) return NULL;
+void *list_iter_peek_current(const list_iter_t *iter) { // Duda -- Preguntar por el testeo if(!iter->curr) return NULL;
+  if(iter->list->size == 0 || !iter->curr) return NULL;
   return iter->curr->value;
 }
 
 bool list_iter_at_last(const list_iter_t *iter) { // Ver
-  if(iter->curr == iter->list->tail || !iter->curr) return true;
+  if(iter->curr == iter->list->tail || iter->list->size == 0) return true;
   else return false;
 }
 
 bool list_iter_at_first(const list_iter_t *iter) { // Ver
-  if(iter->curr == iter->list->head || !iter->curr) return true;
+  if(iter->curr == iter->list->head || iter->list->size == 0) return true;
   else return false;
 }
 
 void list_iter_destroy(list_iter_t *iter) {free(iter);}
 
 bool list_iter_insert_after(list_iter_t *iter, void *value) {
-  node_t *insert_node = (node_t *)malloc(sizeof(node_t));
+  node_t *insert_node = (node_t *) malloc(sizeof(node_t));
   if(!insert_node) return false;
-  if(!iter->curr) {
+  if(iter->list->size == 0 || !iter->curr) {
     insert_node->value = value;
     insert_node->next = NULL;
     insert_node->prev = NULL;
+    iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
     iter->list->size++;
@@ -174,12 +175,13 @@ bool list_iter_insert_after(list_iter_t *iter, void *value) {
 }
 
 bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
-  node_t *insert_node = (node_t *)malloc(sizeof(node_t));
+  node_t *insert_node = (node_t *) malloc(sizeof(node_t));
   if(!insert_node) return false;
-  if(!iter->curr) {
+  if(iter->list->size == 0 || !iter->curr) {
     insert_node->value = value;
     insert_node->next = NULL;
     insert_node->prev = NULL;
+    iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
     iter->list->size++;
@@ -196,7 +198,7 @@ bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
 }
 
 void *list_iter_delete(list_iter_t *iter) {
-  if(iter->list->size == 0) return NULL; // no se si esta bien
+  if(iter->list->size == 0 || !iter->curr) return NULL; 
   node_t *delete_node = iter->curr;
   void *delete_value = delete_node->value;
   if(iter->curr->prev != NULL) iter->curr->prev->next = iter->curr->next;
