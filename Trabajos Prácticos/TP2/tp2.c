@@ -75,7 +75,7 @@ void *list_peek_tail(const list_t *list) {
 }
 
 void *list_pop_head(list_t *list) {
-  if(list->size <= 0) return NULL; // Hay que verificar si tail, head y size son NULL ? Si es NULL, que se devuelve ?
+  if(list->size == 0) return NULL; // Hay que verificar si tail, head y size son NULL ? Si es NULL, que se devuelve ?
   node_t *aux_head = list->head;
   void *head_value = aux_head->value;
   list->head = aux_head->next;
@@ -100,10 +100,8 @@ void *list_pop_tail(list_t *list) {
 
 void list_destroy(list_t *list, void destroy_value(void *)) {
   while(list->head != NULL) {
-    node_t *aux_head = list->head;
-    list->head = aux_head->next;
-    if(destroy_value != NULL) destroy_value(aux_head->value);
-    free(aux_head);
+    if(destroy_value != NULL) destroy_value(list->head->value);
+    list_pop_head(list);
   }
   free(list);
 }
@@ -198,7 +196,7 @@ bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
 }
 
 void *list_iter_delete(list_iter_t *iter) {
-  if(!iter->curr || iter->list->size <= 0) return NULL; // no se si esta bien
+  if(iter->list->size == 0) return NULL; // no se si esta bien
   node_t *delete_node = iter->curr;
   void *delete_value = delete_node->value;
   if(iter->curr->prev != NULL) iter->curr->prev->next = iter->curr->next;
