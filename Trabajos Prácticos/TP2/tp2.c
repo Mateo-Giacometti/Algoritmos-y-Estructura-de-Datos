@@ -31,6 +31,16 @@ list_t *list_new() {
   return new_list;
 }
 
+//Funcion adicional para crear un nodo
+node_t *node_new(void *value) {
+  node_t *new_node = (node_t *) malloc(sizeof(node_t));
+  if(!new_node) return NULL;
+  new_node->value = value;
+  new_node->next = NULL;
+  new_node->prev = NULL;
+  return new_node;
+}
+
 size_t list_length(const list_t *list) {return list->size;}
 
 bool list_is_empty(const list_t *list) {
@@ -39,11 +49,9 @@ bool list_is_empty(const list_t *list) {
 }
 
 bool list_insert_head(list_t *list, void *value) {
-  node_t *new_node = (node_t *) malloc(sizeof(node_t));
+  node_t *new_node = node_new(value);
   if(!new_node) return false;
-  new_node->value = value;
   new_node->next = list->head;
-  new_node->prev = NULL;
   if(list->head != NULL) list->head->prev = new_node;
   list->head = new_node;
   if(!list->tail) list->tail = new_node;
@@ -52,10 +60,8 @@ bool list_insert_head(list_t *list, void *value) {
 }
 
 bool list_insert_tail(list_t *list, void *value) {
-  node_t *new_node = (node_t *) malloc(sizeof(node_t));
+  node_t *new_node = node_new(value);
   if(!new_node) return false;
-  new_node->value = value;
-  new_node->next = NULL;
   new_node->prev = list->tail;
   if(list->tail != NULL) list->tail->next = new_node;
   list->tail = new_node;
@@ -152,19 +158,15 @@ bool list_iter_at_first(const list_iter_t *iter) { // Ver
 void list_iter_destroy(list_iter_t *iter) {free(iter);}
 
 bool list_iter_insert_after(list_iter_t *iter, void *value) {
-  node_t *insert_node = (node_t *) malloc(sizeof(node_t));
+  node_t *insert_node = node_new(value);
   if(!insert_node) return false;
   if(iter->list->size == 0 || !iter->curr) {
-    insert_node->value = value;
-    insert_node->next = NULL;
-    insert_node->prev = NULL;
     iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
     iter->list->size++;
     return true;
   }
-  insert_node->value = value;
   insert_node->next = iter->curr->next;
   insert_node->prev = iter->curr;
   if(iter->curr->next != NULL) iter->curr->next->prev = insert_node;
@@ -175,19 +177,15 @@ bool list_iter_insert_after(list_iter_t *iter, void *value) {
 }
 
 bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
-  node_t *insert_node = (node_t *) malloc(sizeof(node_t));
+  node_t *insert_node = node_new(value);
   if(!insert_node) return false;
   if(iter->list->size == 0 || !iter->curr) {
-    insert_node->value = value;
-    insert_node->next = NULL;
-    insert_node->prev = NULL;
     iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
     iter->list->size++;
     return true;
   }
-  insert_node->value = value;
   insert_node->next = iter->curr;
   insert_node->prev = iter->curr->prev;
   if(iter->curr->prev != NULL) iter->curr->prev->next = insert_node;

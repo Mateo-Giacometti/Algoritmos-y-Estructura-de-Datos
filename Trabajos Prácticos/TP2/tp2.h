@@ -4,6 +4,8 @@
 #ifndef TP2_H
 #define TP2_H
 
+struct node;
+typedef struct node node_t;
 struct list;
 typedef struct list list_t;
 struct iterator;
@@ -14,6 +16,12 @@ typedef struct list_iter list_iter_t;
  * Devuelve NULL si falla.
  */
 list_t *list_new(void);
+
+/*
+ * Crea un nuevo nodo
+ * Devuelve NULL si falla.
+ */
+node_t *node_new(void *value);
 
 /*
  * Devuelve TRUE si la lista está vacia.
