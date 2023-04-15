@@ -71,17 +71,17 @@ bool list_insert_tail(list_t *list, void *value) {
 }
 
 void *list_peek_head(const list_t *list) { 
-  if(list->size == 0) return NULL;
+  if(list_is_empty(list)) return NULL;
   return list->head->value;
 }
 
 void *list_peek_tail(const list_t *list) { 
-  if(list->size == 0) return NULL;
+  if(list_is_empty(list)) return NULL;
   return list->tail->value;
 }
 
 void *list_pop_head(list_t *list) {
-  if(list->size == 0) return NULL; 
+  if(list_is_empty(list)) return NULL; 
   node_t *aux_head = list->head;
   void *head_value = aux_head->value;
   list->head = aux_head->next;
@@ -93,7 +93,7 @@ void *list_pop_head(list_t *list) {
 }
 
 void *list_pop_tail(list_t *list) {
-  if(list->size == 0) return NULL;
+  if(list_is_empty(list)) return NULL;
   node_t *aux_tail = list->tail;
   void *tail_value = aux_tail->value;
   list->tail = aux_tail->prev;
@@ -141,7 +141,7 @@ bool list_iter_backward(list_iter_t *iter) {
 }
 
 void *list_iter_peek_current(const list_iter_t *iter) {
-  if(iter->list->size == 0) return NULL;
+  if(list_is_empty(iter->list)) return NULL;
   return iter->curr->value;
 }
 
@@ -160,7 +160,7 @@ void list_iter_destroy(list_iter_t *iter) {free(iter);}
 bool list_iter_insert_after(list_iter_t *iter, void *value) {
   node_t *insert_node = node_new(value);
   if(!insert_node) return false;
-  if(iter->list->size == 0) {
+  if(list_is_empty(iter->list)) {
     iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
@@ -181,7 +181,7 @@ bool list_iter_insert_after(list_iter_t *iter, void *value) {
 bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
   node_t *insert_node = node_new(value);
   if(!insert_node) return false;
-  if(iter->list->size == 0) {
+  if(list_is_empty(iter->list)) {
     iter->curr = insert_node;
     iter->list->head = insert_node;
     iter->list->tail = insert_node;
@@ -199,8 +199,8 @@ bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
   }
 }
 
-void *list_iter_delete(list_iter_t *iter) { 
-  if(iter->list->size == 0) return NULL; 
+void *list_iter_delete(list_iter_t *iter) {
+  if(list_is_empty(iter->list)) return NULL; 
   node_t *delete_node = iter->curr;
   void *delete_value = delete_node->value;
   if(iter->curr->prev != NULL) iter->curr->prev->next = iter->curr->next;
