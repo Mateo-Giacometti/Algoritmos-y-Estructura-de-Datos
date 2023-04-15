@@ -54,7 +54,7 @@ bool remove_nth_last(list_t *list, size_t n_elem){
     int count2 = 1;
     node_t *aux = list->head;
     node_t *aux2 = list->head;
-    while(!aux) {
+    while(aux != NULL) {
         aux = aux->next;
         count++;
     }
