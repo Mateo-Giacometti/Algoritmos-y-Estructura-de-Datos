@@ -146,12 +146,12 @@ void *list_iter_peek_current(const list_iter_t *iter) {
 }
 
 bool list_iter_at_last(const list_iter_t *iter) { 
-  if(iter->curr == iter->list->tail || iter->list->size == 0) return true;
+  if(iter->curr == iter->list->tail) return true;
   else return false;
 }
 
 bool list_iter_at_first(const list_iter_t *iter) { 
-  if(iter->curr == iter->list->head || iter->list->size == 0) return true;
+  if(iter->curr == iter->list->head) return true;
   else return false;
 }
 
@@ -199,7 +199,7 @@ bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
   }
 }
 
-void *list_iter_delete(list_iter_t *iter) { //ver
+void *list_iter_delete(list_iter_t *iter) { 
   if(iter->list->size == 0) return NULL; 
   node_t *delete_node = iter->curr;
   void *delete_value = delete_node->value;
@@ -207,8 +207,8 @@ void *list_iter_delete(list_iter_t *iter) { //ver
   if(iter->curr->next != NULL) iter->curr->next->prev = iter->curr->prev;
   if(iter->curr == iter->list->head) iter->list->head = iter->curr->next;
   if(iter->curr == iter->list->tail) iter->list->tail = iter->curr->prev;
-  if(!iter->curr->next) iter->curr = iter->curr->prev;
-  else iter->curr = iter->curr->next;
+  if(!iter->curr->next) list_iter_backward(iter);
+  else list_iter_forward(iter);
   iter->list->size--;
   free(delete_node);
   return delete_value;
