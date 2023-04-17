@@ -44,30 +44,63 @@ bool circ_list_is_empty(const circ_list_t *list) {
   else return false;
 }
 
-bool circ_list_insert(circ_list_t *list, void *value) {
-  node_t *new_node = node_new(value);
-  if(!new_node) return false;
-  if(!list->curr) {
-    list->curr = new_node;
-    new_node->next = new_node;
+bool circ_list_insert(circ_list_t *list, node_t *node) {
+  if(!node) return false;
+  if(circ_list_is_empty(list)){
+    list->curr = node;
+    node->next = NULL;
+    list->size++;
+    return true;
   }
-  else {
-    new_node->next = list->curr->next;
-    list->curr->next = new_node;
+  else{
+    node->next = list->curr->next;
+    list->curr->next = node;
+    list->size++;
+    return true;
   }
-  list->size++;
-  return true;
 }
 
-bool circ_list_find(circ_list_t *list, int value) {
-  if(list->curr == NULL) return false;
-  node_t *curr = list->curr;
-  do {
-    if(*(int *)curr->value == value) return true;
-    curr = curr->next;
-  } while(curr != list->curr);
+bool circ_list_find(circ_list_t *list, node_t *node) {
+  if(circ_list_is_empty(list)) return false;
+  node_t *aux = list->curr;
+  do{
+    if(aux->value == node->value) return true;
+    aux = aux->next;
+  }while(aux != list->curr && aux != NULL);
   return false;
 }
+
+int main(){
+    circ_list_t *list = circ_list_new();
+    int a = 1;
+    float b = 2.34;
+    char c = 'c';
+    long int d = 4;
+    double e = 5;
+    bool f = true;
+
+    node_t *A = node_new(&a);
+    node_t *B = node_new(&b);
+    node_t *C = node_new(&c);
+    node_t *D = node_new(&d);
+    node_t *E = node_new(&e);
+    node_t *F = node_new(&f);
+
+    circ_list_insert(list, A);
+    circ_list_insert(list, B);
+    circ_list_insert(list, C);
+    circ_list_insert(list, D);
+    circ_list_insert(list, E);
+
+    if(circ_list_find(list, D)) printf("Encontrado\n");
+    else printf("No encontrado\n");
+    if(circ_list_find(list, F)) printf("Encontrado\n");
+    else printf("No encontrado\n");
+    return 0;
+}
+    
+
+
 
 
 
