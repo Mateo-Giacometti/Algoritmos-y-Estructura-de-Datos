@@ -178,7 +178,7 @@ bool list_iter_insert_after(list_iter_t *iter, void *value) {
   }
 }
 
-bool list_iter_insert_before(list_iter_t *iter, void *value) { // Ver
+bool list_iter_insert_before(list_iter_t *iter, void *value) { 
   node_t *insert_node = node_new(value);
   if(!insert_node) return false;
   if(list_is_empty(iter->list)) {
