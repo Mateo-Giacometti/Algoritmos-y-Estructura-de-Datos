@@ -22,15 +22,6 @@ struct list_iter {
   node_t *curr;
 };
 
-list_t *list_new() {
-  list_t *new_list = (list_t *) malloc(sizeof(list_t));
-  if(!new_list) return NULL;
-  new_list->head = NULL;
-  new_list->tail = NULL;
-  new_list->size = 0;
-  return new_list;
-}
-
 //Funcion adicional para crear un nodo
 node_t *node_new(void *value) {
   node_t *new_node = (node_t *) malloc(sizeof(node_t));
@@ -40,6 +31,16 @@ node_t *node_new(void *value) {
   new_node->prev = NULL;
   return new_node;
 }
+
+list_t *list_new() {
+  list_t *new_list = (list_t *) malloc(sizeof(list_t));
+  if(!new_list) return NULL;
+  new_list->head = NULL;
+  new_list->tail = NULL;
+  new_list->size = 0;
+  return new_list;
+}
+
 
 size_t list_length(const list_t *list) {return list->size;}
 
