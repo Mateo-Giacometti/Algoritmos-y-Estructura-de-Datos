@@ -48,7 +48,7 @@ bool dictionary_delete(dictionary_t *dictionary, const char *key);
  * - El diccionario existe
  * - La clave tiene largo mayor a cero
  * Post-condiciones:
- * - Si la clave está presente, retorna el valor asocaido y err debe ser false
+ * - Si la calve está presente, retorna el valor asocaido y err debe ser false
  * - De otro modo, debe retornar NULL y err debe ser true
  */
 void *dictionary_pop(dictionary_t* dictionary, const char *key, bool *err);
