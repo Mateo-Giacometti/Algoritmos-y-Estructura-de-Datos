@@ -51,7 +51,7 @@ unsigned long hash_function(const char *str, size_t dic_capacity) {
 dictionary_t *dictionary_create(destroy_f destroy) { 
   dictionary_t *dic = malloc(sizeof(dictionary_t));
   if (!dic) return NULL;
-  dic->nodes = calloc(16, sizeof(dic_node_t));
+  dic->nodes = calloc(200000, sizeof(dic_node_t));
   if (!dic->nodes) {
     free(dic);
     return NULL;
@@ -59,7 +59,7 @@ dictionary_t *dictionary_create(destroy_f destroy) {
   if(destroy != NULL) dic->destroy = destroy;
   else dic->destroy = NULL;
   dic->size = 0;
-  dic->capacity = 16;
+  dic->capacity = 200000;
   return dic;
 };
 
