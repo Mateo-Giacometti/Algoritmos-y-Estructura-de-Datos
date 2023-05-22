@@ -49,11 +49,12 @@ unsigned long hash_function(const char *str, size_t dic_capacity) {
 };
 
 
-long unsigned int find_index(dictionary_t *dictionary, const char *key){ //Revisar 
+long unsigned int find_index(dictionary_t *dictionary, const char *key){ //Las virificaciones siguen sin convencerme 
   long unsigned int hash = hash_function(key, dictionary->capacity);
   bool pos_rep = false;
-  if(dictionary->nodes[hash].key == NULL && dictionary->nodes[hash].deleted == true) pos_rep = true;
-  for(long unsigned int i = 0; i < dictionary->capacity; i++){
+  if(dictionary->nodes[hash].key == NULL && dictionary->nodes[hash].deleted == false) return -1;
+  else if(dictionary->nodes[hash].key == NULL && dictionary->nodes[hash].deleted == true) pos_rep = true;
+  for(long unsigned int i = 1; i < dictionary->capacity; i++){
     long unsigned int index = (hash + i) % dictionary->capacity;
     if(dictionary->nodes[index].key != NULL && strcmp(dictionary->nodes[index].key, key) == 0) return index;
     else if(dictionary->nodes[index].key == NULL && dictionary->nodes[index].deleted == false && pos_rep == true) return -1;

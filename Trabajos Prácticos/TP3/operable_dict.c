@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "operable_dict.h"
 
-
+/*
 typedef struct dic_node dic_node_t;
 
 struct dic_node{
@@ -149,7 +149,7 @@ bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
   }
   free(backup_nodes);
   return true;
-};
+};//Creo que esta relativamente bien, a pesar de ser muy muy fea
 
 
 dictionary_t* dictionary_and(dictionary_t *dictionary1, dictionary_t *dictionary2){ // Necesario revisar que diccionary1 y 2 no sean NULL?
@@ -212,3 +212,5 @@ bool dictionary_equals(dictionary_t *dictionary1, dictionary_t *dictionary2){ //
   }
   return true;
 }; //Revisada relativamente
+
+*/
