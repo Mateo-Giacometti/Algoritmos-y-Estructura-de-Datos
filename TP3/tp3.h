@@ -4,28 +4,10 @@
 #ifndef TP3_H
 #define TP3_H
 
+struct dictionary;
 
+typedef struct dictionary dictionary_t;
 typedef void (*destroy_f)(void *);
-
-typedef struct dic_node{
-  char *key;
-  void *value;
-  bool deleted;
-}dic_node_t;
-
-typedef struct dictionary {
-  destroy_f destroy;
-  size_t size;
-  size_t capacity;
-  double charge_factor;
-  dic_node_t *nodes;
-}dictionary_t;
-
-unsigned long int hash_function(const char* data, size_t dic_capacity);
-
-bool rehash(dictionary_t *dictionary);
-
-long unsigned int find_index(dictionary_t *dictionary, const char *key);
 
 /* Crea un nuevo diccionario */
 dictionary_t *dictionary_create(destroy_f destroy);
@@ -66,7 +48,7 @@ bool dictionary_delete(dictionary_t *dictionary, const char *key);
  * - El diccionario existe
  * - La clave tiene largo mayor a cero
  * Post-condiciones:
- * - Si la calve está presente, retorna el valor asocaido y err debe ser false
+ * - Si la clave está presente, retorna el valor asocaido y err debe ser false
  * - De otro modo, debe retornar NULL y err debe ser true
  */
 void *dictionary_pop(dictionary_t* dictionary, const char *key, bool *err);

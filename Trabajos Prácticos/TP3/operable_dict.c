@@ -3,72 +3,7 @@
 #include <stdlib.h>
 #include "operable_dict.h"
 
-/*
-typedef struct dic_node dic_node_t;
-
-struct dic_node{
-  char *key;
-  void *value;
-  bool deleted;
-};
-
-struct dictionary {
-  destroy_f destroy;
-  size_t size;
-  size_t capacity;
-  double charge_factor;
-  dic_node_t *nodes;
-};
-
-//Funciones auxiliares 
-
-unsigned long int hash_function(const char* data, size_t dic_capacity){
-    unsigned long int hash = 0xcbf29ce484222325; 
-
-    while (*data != '\0') {
-        hash ^= (unsigned long int)*data++; 
-        hash *= 0x100000001b3; 
-    }
-
-    return hash % dic_capacity; 
-};
-
-
-long unsigned int find_index(dictionary_t *dictionary, const char *key){ //Revisar 
-  long unsigned int hash = hash_function(key, dictionary->capacity);
-  bool pos_rep = false;
-  if(dictionary->nodes[hash].key == NULL && dictionary->nodes[hash].deleted == true) pos_rep = true;
-  for(long unsigned int i = 0; i < dictionary->capacity; i++){
-    long unsigned int index = (hash + i) % dictionary->capacity;
-    if(dictionary->nodes[index].key != NULL && strcmp(dictionary->nodes[index].key, key) == 0) return index;
-    else if(dictionary->nodes[index].key == NULL && dictionary->nodes[index].deleted == false && pos_rep == true) return -1;
-  }
-  return -1; //Lo rompe ?
-};
-
-
-bool rehash(dictionary_t *dictionary){
-  dic_node_t *new_nodes = calloc((dictionary->capacity * 2), sizeof(dic_node_t));
-  if(!new_nodes) return false;
-  for(int i = 0; i < dictionary->capacity; i++){
-    if(dictionary->nodes[i].key){
-      long unsigned int hash = hash_function(dictionary->nodes[i].key, dictionary->capacity * 2);
-      for(int j = 0; j < dictionary->capacity * 2; j++){
-        long unsigned int index = (hash + j) % (dictionary->capacity * 2);
-        if(!new_nodes[index].key){
-          new_nodes[index].key = dictionary->nodes[i].key;
-          new_nodes[index].value = dictionary->nodes[i].value;
-          break;
-        }
-      }
-    }
-  }
-  free(dictionary->nodes);
-  dictionary->nodes = new_nodes;
-  dictionary->capacity = dictionary->capacity * 2;
-  return true;
-};
-
+//Funciones adicionales para operable dict
 
 dictionary_t* and_insert(dictionary_t *new_dictionary, dictionary_t *min_dict, dictionary_t *max_dict, bool dict1_is_min){
   int count = 0;
@@ -94,9 +29,36 @@ dictionary_t* and_insert(dictionary_t *new_dictionary, dictionary_t *min_dict, d
 };
 
 
+bool or_insert(dictionary_t *new_dictionary, dictionary_t *dict_insert){
+  int num_of_inserts = 0;
+  for(int i = 0; i < dict_insert->capacity; i++){
+    if(dict_insert->nodes[i].key != NULL){
+      if(!dictionary_put(new_dictionary, dict_insert->nodes[i].key, dict_insert->nodes[i].value)){
+        dictionary_destroy(new_dictionary);
+        return false;
+      }
+      num_of_inserts++;
+      if(num_of_inserts == dict_insert->size) break;
+    }
+  }
+  return true;
+};
+
+bool are_equal(dictionary_t *dict1, dictionary_t *dict2){
+  bool err = false;
+  for(int i = 0; i < dict1->capacity; i++){
+    if(dict1->nodes[i].key != NULL){
+      if(dict1->nodes[i].value != dictionary_get(dict2, dict1->nodes[i].key, &err) || err == true) return false;
+    }
+  }
+  return true;
+};
+
+
 //Funciones dadas por la actividad
 
 bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
+  if(!dictionary1 || !dictionary2) return false;
   dic_node_t *backup_nodes = calloc(dictionary1->capacity, sizeof(dic_node_t)); 
   if(!backup_nodes) return false;
   size_t aux_size = dictionary1->size;
@@ -153,37 +115,19 @@ bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
 
 
 dictionary_t* dictionary_and(dictionary_t *dictionary1, dictionary_t *dictionary2){ // Necesario revisar que diccionary1 y 2 no sean NULL?
-  dictionary_t *new_dictionary = dictionary_create(dictionary1->capacity);
+  dictionary_t *new_dictionary = dictionary_create(dictionary1->destroy);
   if(!new_dictionary) return NULL;
   if(dictionary1->size <= dictionary2->size) return and_insert(new_dictionary, dictionary1, dictionary2, true); //Me fijo por capacity o por size ?
   else return and_insert(new_dictionary, dictionary2, dictionary1, false);
 }; //Por las dudas le daria otros vistaso
 
 
-dictionary_t* dictionary_or(dictionary_t *dictionary1, dictionary_t *dictionary2){ // Necesario revisar que diccionary1 y 2 no sean NULL? Ver size o capacity ?
-  dictionary_t *new_dictionary = dictionary_create(dictionary1->capacity);
+dictionary_t* dictionary_or(dictionary_t *dictionary1, dictionary_t *dictionary2){ 
+  dictionary_t *new_dictionary = dictionary_create(dictionary1->destroy);
   if(!new_dictionary) return NULL;
-  int count = 0;
-  for(int i = 0; i < dictionary2->capacity; i++){
-    if(dictionary2->nodes[i].key != NULL){
-      if(!dictionary_put(new_dictionary, dictionary2->nodes[i].key, dictionary2->nodes[i].value)){
-        dictionary_destroy(new_dictionary);
-        return NULL;
-      }
-      count++;
-      if(count == dictionary2->size) break;
-    }
-  }
-  count = 0;
-  for(int j = 0; j < dictionary1->capacity; j++){
-    if(dictionary1->nodes[j].key != NULL){
-      if(!dictionary_put(new_dictionary, dictionary1->nodes[j].key, dictionary1->nodes[j].value)){
-        dictionary_destroy(new_dictionary);
-        return NULL;
-      }
-      count++;
-      if(count == dictionary1->size) break;
-    }
+  if(!or_insert(new_dictionary, dictionary2) || !or_insert(new_dictionary, dictionary1)){ //Esta bien el orden ?
+    dictionary_destroy(new_dictionary);
+    return NULL;
   }
   return new_dictionary;
 }; //Revisado. Capaz se puede reutilizar código 
@@ -191,26 +135,7 @@ dictionary_t* dictionary_or(dictionary_t *dictionary1, dictionary_t *dictionary2
 
 bool dictionary_equals(dictionary_t *dictionary1, dictionary_t *dictionary2){ //Podrias agregar una forma de cortar el for si es que ya se analizaron todos los nodos llenos 
   if(dictionary1->size != dictionary2->size) return false;
-  bool err = false;
-  if(dictionary1->capacity <= dictionary2->capacity){
-    for(int i = 0; i < dictionary1->capacity; i++){
-      if(dictionary1->nodes[i].key != NULL){
-        if(dictionary1->nodes[i].value != dictionary_get(dictionary2, dictionary1->nodes[i].key, &err) || err == true){ 
-          return false;
-        }
-      }
-    }
-  }
-  else{
-    for(int j = 0; j < dictionary2->capacity; j++){
-      if(dictionary2->nodes[j].key != NULL){
-        if(dictionary2->nodes[j].value != dictionary_get(dictionary1, dictionary2->nodes[j].key, &err) || err == true){ 
-          return false;
-        }
-      }
-    }
-  }
-  return true;
+  if(dictionary1->capacity <= dictionary2->capacity) return are_equal(dictionary1, dictionary2);
+  else return are_equal(dictionary2, dictionary1);
 }; //Revisada relativamente
 
-*/
