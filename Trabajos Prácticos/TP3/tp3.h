@@ -21,10 +21,20 @@ typedef struct dictionary {
   dic_node_t *nodes;
 }dictionary_t;
 
+/*Aplica hashing a un string*/
 unsigned long int hash_function(const char* data, size_t dic_capacity);
 
+/*Aplica rehash a un diccionario*/
 bool rehash(dictionary_t *dictionary);
 
+/* Busca el indice de una clave en el diccionario. 
+ * Pre-condiciones:
+ * - El diccionario existe
+ * - La clave tiene largo mayor a cero
+ * Post-condiciones:
+ * - Retoro el indice de la clave si se encuentra
+ * - Retorna -1 si no se encuentra
+ */
 long unsigned int find_index(dictionary_t *dictionary, const char *key);
 
 /* Crea un nuevo diccionario */

@@ -210,6 +210,7 @@ void dictionary_destroy(dictionary_t *dictionary){
     if(dictionary->nodes[i].key != NULL){
       if(dictionary->destroy != NULL) dictionary->destroy(dictionary->nodes[i].value);
       free(dictionary->nodes[i].key);
+      
       used_node_del++;
     }
     if(used_node_del == dictionary->size) break;

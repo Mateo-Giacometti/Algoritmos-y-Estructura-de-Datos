@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Ejemplo de distintas funciones de iteracion
-
 /*
 Itera cada par clave-valor del diccionario y le suma 1 al valor. Cada nuevo resultado se guarda en un array de int.
 */

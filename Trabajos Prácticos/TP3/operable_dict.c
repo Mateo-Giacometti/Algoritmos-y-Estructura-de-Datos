@@ -58,7 +58,6 @@ bool are_equal(dictionary_t *dict1, dictionary_t *dict2){
 //Funciones dadas por la actividad
 
 bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
-  if(!dictionary1 || !dictionary2) return false;
   dic_node_t *backup_nodes = calloc(dictionary1->capacity, sizeof(dic_node_t)); 
   if(!backup_nodes) return false;
   size_t aux_size = dictionary1->size;
