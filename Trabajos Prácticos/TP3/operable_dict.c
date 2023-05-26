@@ -6,24 +6,26 @@
 //Funciones adicionales para operable dict
 
 dictionary_t* and_insert(dictionary_t *new_dictionary, dictionary_t *min_dict, dictionary_t *max_dict, bool dict1_is_min){
-  int count = 0;
+  int num_of_inserts = 0;
   for(int i = 0; i < min_dict->capacity; i++){
-    if(min_dict->nodes[i].key != NULL && dictionary_contains(max_dict, min_dict->nodes[i].key)){ //Preguntar si no se rompe
+    if(min_dict->nodes[i].key != NULL && dictionary_contains(max_dict, min_dict->nodes[i].key)){ 
       if(dict1_is_min){
         if(!dictionary_put(new_dictionary, min_dict->nodes[i].key, min_dict->nodes[i].value)){
+          new_dictionary->destroy = NULL;
           dictionary_destroy(new_dictionary);
           return NULL;
         }
       }
       else{
         if(!dictionary_put(new_dictionary, max_dict->nodes[i].key, max_dict->nodes[i].value)){
+          new_dictionary->destroy = NULL;
           dictionary_destroy(new_dictionary);
           return NULL;
         }
       }
-      count++;
-      if(count == min_dict->size) break;
+      num_of_inserts++;
     }
+    if(num_of_inserts == min_dict->size) break;
   }
   return new_dictionary;
 };
@@ -34,22 +36,27 @@ bool or_insert(dictionary_t *new_dictionary, dictionary_t *dict_insert){
   for(int i = 0; i < dict_insert->capacity; i++){
     if(dict_insert->nodes[i].key != NULL){
       if(!dictionary_put(new_dictionary, dict_insert->nodes[i].key, dict_insert->nodes[i].value)){
+        new_dictionary->destroy = NULL;
         dictionary_destroy(new_dictionary);
         return false;
       }
       num_of_inserts++;
-      if(num_of_inserts == dict_insert->size) break;
     }
+    if(num_of_inserts == dict_insert->size) break;
   }
   return true;
 };
 
+
 bool are_equal(dictionary_t *dict1, dictionary_t *dict2){
   bool err = false;
+  int num_of_comp = 0;
   for(int i = 0; i < dict1->capacity; i++){
     if(dict1->nodes[i].key != NULL){
       if(dict1->nodes[i].value != dictionary_get(dict2, dict1->nodes[i].key, &err) || err == true) return false;
+      num_of_comp++;
     }
+    if(num_of_comp == dict1->size) break;
   }
   return true;
 };
@@ -113,28 +120,27 @@ bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
 };//Creo que esta relativamente bien, a pesar de ser muy muy fea
 
 
-dictionary_t* dictionary_and(dictionary_t *dictionary1, dictionary_t *dictionary2){ // Necesario revisar que diccionary1 y 2 no sean NULL?
+dictionary_t* dictionary_and(dictionary_t *dictionary1, dictionary_t *dictionary2){
   dictionary_t *new_dictionary = dictionary_create(dictionary1->destroy);
   if(!new_dictionary) return NULL;
-  if(dictionary1->size <= dictionary2->size) return and_insert(new_dictionary, dictionary1, dictionary2, true); //Me fijo por capacity o por size ?
+  if(dictionary1->size <= dictionary2->size) return and_insert(new_dictionary, dictionary1, dictionary2, true); 
   else return and_insert(new_dictionary, dictionary2, dictionary1, false);
-}; //Por las dudas le daria otros vistaso
+}; 
 
 
 dictionary_t* dictionary_or(dictionary_t *dictionary1, dictionary_t *dictionary2){ 
   dictionary_t *new_dictionary = dictionary_create(dictionary1->destroy);
   if(!new_dictionary) return NULL;
-  if(!or_insert(new_dictionary, dictionary2) || !or_insert(new_dictionary, dictionary1)){ //Esta bien el orden ?
-    dictionary_destroy(new_dictionary);
+  if(!or_insert(new_dictionary, dictionary2) || !or_insert(new_dictionary, dictionary1)){ 
     return NULL;
   }
   return new_dictionary;
-}; //Revisado. Capaz se puede reutilizar código 
+}; 
 
 
-bool dictionary_equals(dictionary_t *dictionary1, dictionary_t *dictionary2){ //Podrias agregar una forma de cortar el for si es que ya se analizaron todos los nodos llenos 
+bool dictionary_equals(dictionary_t *dictionary1, dictionary_t *dictionary2){ 
   if(dictionary1->size != dictionary2->size) return false;
   if(dictionary1->capacity <= dictionary2->capacity) return are_equal(dictionary1, dictionary2);
   else return are_equal(dictionary2, dictionary1);
-}; //Revisada relativamente
+}; 
 

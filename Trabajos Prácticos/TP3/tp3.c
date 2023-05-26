@@ -68,7 +68,7 @@ bool rehash(dictionary_t *dictionary){
         }
       }
     }
-    if(inserted_nodes == dictionary->size) break; //Va aca ?
+    if(inserted_nodes == dictionary->size) break; 
   }
   free(dictionary->nodes);
   dictionary->nodes = new_nodes;
@@ -126,7 +126,7 @@ dictionary_t *dictionary_create(destroy_f destroy) {
   else dic->destroy = NULL;
   dic->size = 0;
   dic->capacity = 100;
-  dic->charge_factor = 0.70; //por que se rompe cuando esta en 1 ?
+  dic->charge_factor = 0.70; 
   return dic;
 };
 
@@ -205,12 +205,11 @@ bool dictionary_contains(dictionary_t *dictionary, const char *key) {
 size_t dictionary_size(dictionary_t *dictionary) { return dictionary->size; };
 
 void dictionary_destroy(dictionary_t *dictionary){
-  int used_node_del = 0;  //Resulta util ?
+  int used_node_del = 0;  
   for(int i = 0; i < dictionary->capacity; i++){
     if(dictionary->nodes[i].key != NULL){
       if(dictionary->destroy != NULL) dictionary->destroy(dictionary->nodes[i].value);
       free(dictionary->nodes[i].key);
-      
       used_node_del++;
     }
     if(used_node_del == dictionary->size) break;

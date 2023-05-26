@@ -68,6 +68,7 @@ bool qdictionary_contains(queryable_dictionary_t *dictionary, const char *key){
     return false;
 }
 size_t qdictionary_size(queryable_dictionary_t *dictionary){
+    
     return 0;
 }
 void qdictionary_destroy(queryable_dictionary_t *dictionary){
