@@ -248,9 +248,9 @@ bool test_fail_or(){
 bool test_equals(){
   printf("========== %s ==========\n", __PRETTY_FUNCTION__);
   bool tests_result = true;
-  dictionary_t *dict1 = dictionary_create(free);
-  dictionary_t *dict2 = dictionary_create(free);
-  dictionary_t *dict3 = dictionary_create(free);
+  dictionary_t *dict1 = dictionary_create(NULL);
+  dictionary_t *dict2 = dictionary_create(NULL);
+  dictionary_t *dict3 = dictionary_create(NULL);
   char *key0 = "key_0";
   char *key1 = "key_1";
   char *key2 = "key_2";
@@ -285,26 +285,14 @@ bool test_equals(){
   dictionary_put(dict3, key2, value2);
   dictionary_put(dict3, key3, value3);
   tests_result &= test_assert("Diccionarios con los mismos elementos pero diferente orden en memoria son iguales", dictionary_equals(dict1, dict3));
-  for(int i = 0; i < dict1->capacity; i++){
-    if(dict1->nodes[i].key != NULL){
-      free(dict1->nodes[i].key);
-    }
-    if(dict2->nodes[i].key != NULL){
-      free(dict2->nodes[i].key);
-    }
-    if(dict3->nodes[i].key != NULL){
-      free(dict3->nodes[i].key);
-    }
-  }
   free(value0);
   free(value1);
   free(value2);
-  free(dict1->nodes);
-  free(dict2->nodes);
-  free(dict3->nodes);
-  free(dict1);
-  free(dict2);
-  free(dict3);
+  free(value3);
+  free(not_value);
+  dictionary_destroy(dict1);
+  dictionary_destroy(dict2);
+  dictionary_destroy(dict3);
   return tests_result;
 }
 

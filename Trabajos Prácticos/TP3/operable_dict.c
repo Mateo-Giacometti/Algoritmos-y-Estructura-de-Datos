@@ -5,6 +5,45 @@
 
 //Funciones adicionales para operable dict
 
+dic_node_t* make_backup(dictionary_t *dictionary){
+  dic_node_t *backup = calloc(dictionary->capacity, sizeof(dic_node_t)); 
+  if(!backup) return NULL;
+  for(int i = 0; i < dictionary->capacity; i++){
+    if(dictionary->nodes[i].key != NULL){
+      backup[i].key = malloc(sizeof(char) * (strlen(dictionary->nodes[i].key) + 1));
+      if(!backup[i].key){
+        for(int j = 0; j < i; j++){
+          if(backup[j].key != NULL){ 
+            free(backup[j].key);
+          }
+        }
+        free(backup);
+        return NULL;
+      }
+      strcpy(backup[i].key, dictionary->nodes[i].key);
+      backup[i].value = dictionary->nodes[i].value;
+    }
+    else if(dictionary->nodes[i].deleted == true){
+      backup[i].deleted = true;
+    }
+  }
+  return backup;
+};
+
+
+void delete_backup(dic_node_t *backup, size_t backup_capacity ,size_t backup_size){
+  int deleted_nodes = 0;
+  for(int k = 0; k < backup_capacity; k++){
+    if(backup[k].key != NULL){
+      free(backup[k].key);
+      deleted_nodes++;
+    }
+    if(deleted_nodes == backup_size) break;
+  }
+  free(backup);
+};
+
+
 dictionary_t* and_insert(dictionary_t *new_dictionary, dictionary_t *min_dict, dictionary_t *max_dict, bool dict1_is_min){
   int num_of_inserts = 0;
   for(int i = 0; i < min_dict->capacity; i++){
@@ -65,30 +104,11 @@ bool are_equal(dictionary_t *dict1, dictionary_t *dict2){
 //Funciones dadas por la actividad
 
 bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
-  dic_node_t *backup_nodes = calloc(dictionary1->capacity, sizeof(dic_node_t)); 
+  dic_node_t *backup_nodes = make_backup(dictionary1);
   if(!backup_nodes) return false;
   size_t aux_size = dictionary1->size;
   size_t aux_capacity = dictionary1->capacity;
-  int count = 0;
-  for(int i = 0; i < dictionary1->capacity; i++){
-    if(dictionary1->nodes[i].key != NULL){
-      backup_nodes[i].key = malloc(sizeof(char) * (strlen(dictionary1->nodes[i].key) + 1));
-      if(!backup_nodes[i].key){
-        for(int j = 0; j < i; j++){
-          if(backup_nodes[j].key != NULL){ 
-            free(backup_nodes[j].key);
-          }
-        }
-        free(backup_nodes);
-        return false;
-      }
-      strcpy(backup_nodes[i].key, dictionary1->nodes[i].key);
-      backup_nodes[i].value = dictionary1->nodes[i].value;
-    }
-    else if(dictionary1->nodes[i].deleted == true){
-      backup_nodes[i].deleted = true;
-    }
-  }
+  int new_nodes_inserted = 0;
   for(int j = 0; j < dictionary2->capacity; j++){
     if(dictionary2->nodes[j].key != NULL){
       if(!dictionary_put(dictionary1, dictionary2->nodes[j].key, dictionary2->nodes[j].value)){
@@ -103,21 +123,13 @@ bool dictionary_update(dictionary_t *dictionary1, dictionary_t *dictionary2){
         dictionary1->capacity = aux_capacity;
         return false;
       }
-      count++;
-      if(count == dictionary2->size) break;
+      new_nodes_inserted++;
     }
+    if(new_nodes_inserted == dictionary2->size) break;
   }
-  count = 0;
-  for(int k = 0; k < aux_capacity; k++){
-    if(backup_nodes[k].key != NULL){
-      free(backup_nodes[k].key);
-      count++;
-      if(count == aux_size) break;
-    }
-  }
-  free(backup_nodes);
+  delete_backup(backup_nodes, aux_capacity, aux_size);
   return true;
-};//Creo que esta relativamente bien, a pesar de ser muy muy fea
+};
 
 
 dictionary_t* dictionary_and(dictionary_t *dictionary1, dictionary_t *dictionary2){

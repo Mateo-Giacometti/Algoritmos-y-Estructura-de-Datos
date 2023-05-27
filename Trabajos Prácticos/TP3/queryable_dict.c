@@ -7,6 +7,9 @@
 
 struct queryable_dictionary {
     dictionary_t* dict;
+    char** keys;
+    void** values;
+    dict_item_t** items;
 };
 
 struct dict_item {
@@ -52,25 +55,31 @@ dict_item_t** get_items(queryable_dictionary_t* dict, copy_value_f copy){
 queryable_dictionary_t *qdictionary_create(destroy_f destroy){
     return NULL;
 }
+
 bool qdictionary_put(queryable_dictionary_t *dictionary, const char *key, void *value){
     return false;
 }
+
 void *qdictionary_get(queryable_dictionary_t *dictionary, const char *key, bool *err){
     return NULL;
 }
+
 bool qdictionary_delete(queryable_dictionary_t *dictionary, const char *key){
     return false;
 }
+
 void *qdictionary_pop(queryable_dictionary_t* dictionary, const char *key, bool *err){
     return NULL;
 }
+
 bool qdictionary_contains(queryable_dictionary_t *dictionary, const char *key){
     return false;
 }
+
 size_t qdictionary_size(queryable_dictionary_t *dictionary){
-    
     return 0;
 }
+
 void qdictionary_destroy(queryable_dictionary_t *dictionary){
     return;
 }

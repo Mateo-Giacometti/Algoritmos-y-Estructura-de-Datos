@@ -16,13 +16,12 @@
 
 void iterate(dictionary_t* dict, iterate_f f, void* extra){
     if(!f || !extra) return; 
-    size_t count = 0;
+    size_t nodes_iterated = 0;
     for(int i = 0; i < dict->capacity; i++){
         if(dict->nodes[i].key != NULL){
             f(dict->nodes[i].key, dict->nodes[i].value, extra);
-            count++;
+            nodes_iterated++;
         }
-        if(count == dict->size) break;
+        if(nodes_iterated == dict->size) break;
     }
-    return;
 };

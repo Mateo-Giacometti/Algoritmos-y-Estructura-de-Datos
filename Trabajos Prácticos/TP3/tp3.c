@@ -2,64 +2,30 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-/*
-typedef struct dic_node dic_node_t;
 
+//Funciones Adicionales
 
-struct dic_node{
-  char *key;
-  void *value;
-  bool deleted;
-};
-
-struct dictionary {
-  destroy_f destroy;
-  size_t size;
-  size_t capacity;
-  double charge_factor;
-  dic_node_t *nodes;
-};
-
-*/
 unsigned long int hash_function(const char* data, size_t dic_capacity){
-    unsigned long int hash = 0xcbf29ce484222325; 
-
-    while (*data != '\0') {
-        hash ^= (unsigned long int)*data++; 
-        hash *= 0x100000001b3; 
-    }
-
-    return hash % dic_capacity; 
-}
-
-
-/*
-unsigned long hash_function(const char *str, size_t dic_capacity) {
-    unsigned long hash = 0;
-    size_t length = strlen(str);
-    size_t i;
-    for(i = 0; i < length; ++i) {
-        hash += str[i];
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash % dic_capacity; 
+  unsigned long int hash = 0xcbf29ce484222325; 
+  while (*data != '\0') {
+    hash ^= (unsigned long int)*data++; 
+    hash *= 0x100000001b3; 
+  }
+  return hash % dic_capacity; 
 };
-*/
 
 
 bool rehash(dictionary_t *dictionary){
   dic_node_t *new_nodes = calloc((dictionary->capacity * 2), sizeof(dic_node_t));
   if(!new_nodes) return false;
   int inserted_nodes = 0;
+  long unsigned int hash;
+  long unsigned int index;
   for(int i = 0; i < dictionary->capacity; i++){
     if(dictionary->nodes[i].key != NULL){
-      long unsigned int hash = hash_function(dictionary->nodes[i].key, dictionary->capacity * 2);
+      hash = hash_function(dictionary->nodes[i].key, dictionary->capacity * 2);
       for(int j = 0; j < dictionary->capacity * 2; j++){
-        long unsigned int index = (hash + j) % (dictionary->capacity * 2);
+        index = (hash + j) % (dictionary->capacity * 2);
         if(!new_nodes[index].key){
           new_nodes[index].key = dictionary->nodes[i].key;
           new_nodes[index].value = dictionary->nodes[i].value;
@@ -74,80 +40,59 @@ bool rehash(dictionary_t *dictionary){
   dictionary->nodes = new_nodes;
   dictionary->capacity = dictionary->capacity * 2;
   return true;
-}
-
-/*
-bool rehash(dictionary_t *dictionary){
-  dictionary_t aux;
-  aux.nodes = calloc((dictionary->capacity * 2), sizeof(dic_node_t));
-  if(!aux.nodes) return false;
-  aux.capacity = dictionary->capacity * 2;
-  aux.size = 0;
-  aux.destroy = dictionary->destroy;
-  aux.charge_factor = dictionary->charge_factor;
-  for(int i = 0; i < dictionary->capacity; i++){
-    if(dictionary->nodes[i].key != NULL){
-      if(!dictionary_put(&aux, dictionary->nodes[i].key, dictionary->nodes[i].value)){
-        free(aux.nodes);
-        return false;
-      }
-      free(dictionary->nodes[i].key);
-      if(aux.size == dictionary->size) break;
-    }
-  }
-  free(dictionary->nodes);
-  dictionary->nodes = aux.nodes;
-  dictionary->capacity = aux.capacity;
-  return true;
 };
-*/
 
 
-long unsigned int find_index(dictionary_t *dictionary, const char *key){ //Las virificaciones siguen sin convencerme 
+long unsigned int find_index(dictionary_t *dictionary, const char *key){ 
   long unsigned int hash = hash_function(key, dictionary->capacity);
+  long unsigned int index;
   for(long unsigned int i = 0; i < dictionary->capacity; i++){
-    long unsigned int index = (hash + i) % dictionary->capacity;
+    index = (hash + i) % dictionary->capacity;
     if(dictionary->nodes[index].key != NULL && strcmp(dictionary->nodes[index].key, key) == 0) return index;
     else if(dictionary->nodes[index].key == NULL && dictionary->nodes[index].deleted == false) return -1;
   }
-  return -1; //Lo rompe ?
+  return -1; 
 };
 
 
-dictionary_t *dictionary_create(destroy_f destroy) { 	
-  dictionary_t *dic = malloc(sizeof(dictionary_t));
-  if(!dic) return NULL;
-  dic->nodes = calloc(100, sizeof(dic_node_t));
-  if(!dic->nodes) {
-    free(dic);
+dictionary_t *dictionary_create(destroy_f destroy){ 	
+  dictionary_t *dict = malloc(sizeof(dictionary_t));
+  if(!dict) return NULL;
+  dict->nodes = calloc(18, sizeof(dic_node_t));
+  if(!dict->nodes) {
+    free(dict);
     return NULL;
   }
-  if(destroy != NULL) dic->destroy = destroy;
-  else dic->destroy = NULL;
-  dic->size = 0;
-  dic->capacity = 100;
-  dic->charge_factor = 0.70; 
-  return dic;
+  if(destroy != NULL) dict->destroy = destroy;
+  else dict->destroy = NULL;
+  dict->size = 0;
+  dict->capacity = 18;
+  dict->charge_factor = 0.70; 
+  return dict;
 };
 
 
-bool dictionary_put(dictionary_t *dictionary, const char *key, void *value) {
+bool dictionary_put(dictionary_t *dictionary, const char *key, void *value){
   if(((double)dictionary->size / (double)dictionary->capacity) >= (dictionary->charge_factor)){
     if(!rehash(dictionary)) return false;
   }
+  bool deleted_place = false;
+  long unsigned int index;
   long unsigned int hash = hash_function(key, dictionary->capacity);
+  if(dictionary->nodes[hash].deleted == true) deleted_place = true;
   for(int i = 0; i < dictionary->capacity; i++){
-    long unsigned int index = (hash + i) % dictionary->capacity;
-    if(!dictionary->nodes[index].key){
-        dictionary->nodes[index].key = malloc(sizeof(char) * (strlen(key) + 1));
-        if(!dictionary->nodes[index].key) return false;
-        strcpy(dictionary->nodes[index].key, key);
-        dictionary->nodes[index].value = value;
-        if(dictionary->nodes[index].deleted) dictionary->nodes[index].deleted = false;
-        dictionary->size++;
-        return true;
+    index = (hash + i) % dictionary->capacity;
+    if(!dictionary->nodes[index].key && dictionary->nodes[index].deleted == false){
+      if(deleted_place) index = hash;
+      dictionary->nodes[index].key = malloc(sizeof(char) * (strlen(key) + 1));
+      if(!dictionary->nodes[index].key) return false;
+      strcpy(dictionary->nodes[index].key, key);
+      dictionary->nodes[index].value = value;
+      if(dictionary->nodes[index].deleted) dictionary->nodes[index].deleted = false;
+      dictionary->size++;
+      return true;
     }
-    else if(strcmp(dictionary->nodes[index].key, key) == 0){
+    else if(dictionary->nodes[index].key && strcmp(dictionary->nodes[index].key, key) == 0){
       if(dictionary->nodes[index].value != NULL){
         if(dictionary->destroy != NULL) dictionary->destroy(dictionary->nodes[index].value);
       }
@@ -155,10 +100,11 @@ bool dictionary_put(dictionary_t *dictionary, const char *key, void *value) {
       return true;
     }
   }
-  return false; //Va ?
+  return false; 
 };
 
-void *dictionary_get(dictionary_t *dictionary, const char *key, bool *err) {
+
+void *dictionary_get(dictionary_t *dictionary, const char *key, bool *err){
   long unsigned int index = find_index(dictionary, key);
   if(index == -1){
     *err = true;
@@ -167,13 +113,14 @@ void *dictionary_get(dictionary_t *dictionary, const char *key, bool *err) {
   *err = false;
   return dictionary->nodes[index].value;
 };
+
   
-bool dictionary_delete(dictionary_t *dictionary, const char *key) {
+bool dictionary_delete(dictionary_t *dictionary, const char *key){
   long unsigned int index = find_index(dictionary, key);
   if(index == -1) return false;
   free(dictionary->nodes[index].key);
   dictionary->nodes[index].key = NULL;
-  if(dictionary->nodes[index].value != NULL) {
+  if(dictionary->nodes[index].value != NULL){
     if(dictionary->destroy != NULL) dictionary->destroy(dictionary->nodes[index].value);
     dictionary->nodes[index].value = NULL;
   }
@@ -181,6 +128,7 @@ bool dictionary_delete(dictionary_t *dictionary, const char *key) {
   dictionary->size--;
   return true;
 };
+
 
 void *dictionary_pop(dictionary_t *dictionary, const char *key, bool *err) {
   long unsigned int index = find_index(dictionary, key);
@@ -196,13 +144,16 @@ void *dictionary_pop(dictionary_t *dictionary, const char *key, bool *err) {
   return dictionary->nodes[index].value;
 };
 
+
 bool dictionary_contains(dictionary_t *dictionary, const char *key) {
   long unsigned int index = find_index(dictionary, key);
   if(index == -1) return false;
   else return true;
 };
 
+
 size_t dictionary_size(dictionary_t *dictionary) { return dictionary->size; };
+
 
 void dictionary_destroy(dictionary_t *dictionary){
   int used_node_del = 0;  

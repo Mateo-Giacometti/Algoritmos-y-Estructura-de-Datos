@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 bool test_create_and_destroy_dict() {
   printf("========== %s ==========\n", __PRETTY_FUNCTION__);
   bool tests_result = true;
@@ -330,8 +329,6 @@ bool test_fail_insert() {
   dictionary_destroy(dict);
   return tests_result;
 }
-
-
 
 int main(void) {
   srand(117);
