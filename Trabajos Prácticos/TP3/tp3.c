@@ -54,6 +54,7 @@ long unsigned int find_index(dictionary_t *dictionary, const char *key){
   return -1; 
 };
 
+//Funciones dadas por la actividad
 
 dictionary_t *dictionary_create(destroy_f destroy){ 	
   dictionary_t *dict = malloc(sizeof(dictionary_t));
