@@ -4,7 +4,7 @@
 
 /*
 Dada una lista simplemente enlazada crear una función que elimine el “n-ésimo”
-nodo contando desde el último elemento. (por ejemplo si n =0 tiene que eliminar
+nodo contando desde el último elemento. (por ejemplo si n = 0 tiene que eliminar
 el último nodo, si n=1 tiene que eliminar el ante-último nodo, etc). Codificar
 la función bool remove_nth_last(struct Node* head) en O(n). Muchos puntos
 extras: Hacer la función recorriendo la lista una sola vez.
@@ -97,6 +97,33 @@ bool remove_nth_last_ef(list_t *list, size_t n_elem) {
   return true;
 }
 
+bool remove_nth_last_alternative(node_t **head, size_t n) {
+  if (!*head)
+    return false;
+
+  node_t *aux_node = *head;
+  node_t *n_elem = *head;
+  int counter = 0;
+
+  while (aux_node) {
+    aux_node = aux_node->next;
+    counter++;
+
+    if (counter > n + 2) {
+      n_elem = n_elem->next;
+    }
+  }
+
+  if (counter > n) {
+    if(n == counter - 1) *head = NULL;
+    else n_elem->next = n_elem->next->next;
+    return true;
+  }
+
+  return false;
+}
+
+
 void list_destroy(list_t *list) {
   node_t *aux = list->head;
   while (aux != NULL) {
@@ -150,7 +177,14 @@ int main(void) {
   list_print(list);
   puts("");
 
-  remove_nth_last(list, 6);
+  if(!remove_nth_last_alternative(&list->head, 6)){
+    printf("No changes or fail\n");
+  }
+
+  list_print(list);
+  puts("");
+
+  remove_nth_last(list, 5);
 
   list_print(list);
   puts("");

@@ -371,6 +371,5 @@ def main():
     print(f"The actors with the most centrality appear on average {central_vertices[0]} times and their IDs are {central_vertices[1]}")
     print(f"The movies with the most centrality appear on average {central_vertices[2]} times and their IDs are {central_vertices[3]}")
 
-
 if __name__ == '__main__':
     main()

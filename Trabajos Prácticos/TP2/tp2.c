@@ -41,13 +41,9 @@ list_t *list_new() {
   return new_list;
 }
 
-
 size_t list_length(const list_t *list) {return list->size;}
 
-bool list_is_empty(const list_t *list) {
-  if(list->size == 0) return true;
-  else return false;
-}
+bool list_is_empty(const list_t *list) {return list->size == 0;}
 
 bool list_insert_head(list_t *list, void *value) {
   node_t *new_node = node_new(value);
@@ -146,10 +142,7 @@ void *list_iter_peek_current(const list_iter_t *iter) {
   return iter->curr->value;
 }
 
-bool list_iter_at_last(const list_iter_t *iter) { 
-  if(iter->curr == iter->list->tail) return true;
-  else return false;
-}
+bool list_iter_at_last(const list_iter_t *iter) {return iter->curr == iter->list->tail;}
 
 bool list_iter_at_first(const list_iter_t *iter) { 
   if(iter->curr == iter->list->head) return true;
